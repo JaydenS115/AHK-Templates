@@ -1,2 +1,2 @@
 # AHK-Templates
-Collection of Templates to start AutoHotkey Scripts
+A Collection of Templates and Utilities to start AutoHotkey Scripts
