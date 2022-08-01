@@ -41,8 +41,9 @@ $!Esc::
 	; check for double-tap of hotkey to quick-exit
 	if( (A_TimeSincePriorHotkey <= 250)   ; (double tap window == 250ms)
 	 && (A_PriorHotkey == A_ThisHotkey) ) {
+		Suspend, On  ; Pause script before exiting
 		SoundPlay, %A_WinDir%\Media\chord.wav, WAIT
-		ExitApp -1  ; if double-tap, terminate the script
+		ExitApp -1   ; If double-tap, terminate the script
 	}
 	
 	Suspend, Toggle           ; Toggle suspend status
