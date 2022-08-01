@@ -35,29 +35,21 @@ return  ; END - Global Construct Initialization
 ; Quick Suspend Toggle & Emergency Exit  --  Alt+Esc
 ;     Press to toggle Suspend of the script, double-tap to Exit script.
 $!Esc::
-	Suspend, Permit  ; (this thread is exempt from suspension,
-	Critical, On     ;  and will not be interrupted)
+	Suspend, Permit  ; this thread is exempt from suspension,
+	Critical, On     ; and will not be interrupted
 	
-	KeyWait, Esc, T0.20     ; check for double-tap of Escape
-	if( !ErrorLevel ) {
-		KeyWait, Esc, T0.20 D
-		if( !ErrorLevel ) {  ; if successful double-tap,
-			SoundPlay, %A_WinDir%\Media\chord.wav, WAIT
-			ExitApp -1       ; terminate the script
-		}
+	; check for double-tap of hotkey to quick-exit
+	if( (A_TimeSincePriorHotkey <= 250)   ; (double tap window == 250ms)
+	 && (A_PriorHotkey == A_ThisHotkey) ) {
+		SoundPlay, %A_WinDir%\Media\chord.wav, WAIT
+		ExitApp -1  ; if double-tap, terminate the script
 	}
 	
-	if( !A_IsSuspended ) {       ; If script not currently suspended,
-		Suspend, On              ;     suspend hotkeys,
-		Critical, Off            ;
-		OnSuspend(true)          ;     and notify any relevant constructs
-	} else {                     ; Else,
-		Suspend, Off             ;     re-enable hotkeys,
-		Critical, Off            ;
-		OnSuspend(false)         ;     and notify any relevant constructs
-	}
+	Suspend, Toggle           ; Toggle suspend status
+	Critical, Off             ; Allow this thread to be interrupted
+	OnSuspend(A_IsSuspended)  ; Notify constructs of new suspend status
 
-	KeyWait, Esc  ; Avoid hold-repeat behavior of ESC key
+	KeyWait, Esc, T2  ; Avoid hold-repeat behavior of ESC key
 return
 
 
