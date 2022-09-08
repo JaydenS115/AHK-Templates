@@ -29,10 +29,10 @@
 ;~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~;
 ;------- SCRIPT UTILITIES ----------------------------------------------------;
 
-; UTIL_OnSuspend ( )  --  Can be called after performing a Suspend command to
-;                         notify constructs within this function definition.
-;                         Use  A_IsSuspended  to retrieve the Suspend state.
-UTIL_OnSuspend()
+; NotifyOfSuspend ( )  --  Can be called after performing a Suspend command to
+;                          notify constructs within this function definition.
+;                          Use  A_IsSuspended  to retrieve the Suspend state.
+NotifyOfSuspend()
 {	global  ; Assume-global mode
     /*
         Any actions to do upon Suspend / Un-Suspend can go here
@@ -43,11 +43,10 @@ UTIL_OnSuspend()
 
 }
 
-; Alt+Esc (by default)  --  Quick Suspend Toggle / Emergency Exit Hotkey
+; Alt+Esc [by default]  --  Quick Suspend Toggle / Emergency Exit Hotkey
  Hotkey_QuickSuspendOrExit  :=  "$!Esc"
 ;                           Press to toggle Suspend of the script,
 ;                           hold to Exit script.
-
 #HotIf
 Hotkey(Hotkey_QuickSuspendOrExit, SuspendToggleAndNotify, "On S P9999")
 
@@ -56,7 +55,7 @@ SuspendToggleAndNotify( ThisHotkey := "" )
     Critical("On")  ; and will not be interrupted
 
     static keyNameNoModifiers := StrSplit( Hotkey_QuickSuspendOrExit
-	                             , " &" , "#!^+&<>*~$" , 2 ).Get(1, "Esc")
+                                 , " &" , "#!^+&<>*~$" , 2 ).Get(1, "Esc")
 
     if(ThisHotkey)  ; If this function is called by hotkey
     {
@@ -86,7 +85,7 @@ SuspendToggleAndNotify( ThisHotkey := "" )
         }
     }
 
-    UTIL_OnSuspend()  ; Notify any relevant constructs of new suspend status
+    NotifyOfSuspend()  ; Notify any relevant constructs of new suspend status
 
     ; Suspended Overlay - shows a translucent message when script suspended
     if( UTIL_ShowSuspendOSD ) {
@@ -110,7 +109,8 @@ SuspendToggleAndNotify( ThisHotkey := "" )
         }
     }  ; End - Suspended Overlay code segment
 
-    KeyWait(keyNameNoModifiers)  ; Avoid any hold-repeat behavior of hotkey
+    if(ThisHotkey)  ; If this function is called by hotkey
+        KeyWait(keyNameNoModifiers)  ; Avoid any hold-to-repeat key behavior
 }
 
 
@@ -136,7 +136,7 @@ NewOSDWindow( ControlAlpha := 255 )
 ; Clamp ( value , min , max )  --  Returns a value clamped between given
 ;                                  minimum and maximum numbers. Returns the
 ;                                  given value if it is between min and max.
-Clamp( _Value, _Min:=0, _Max:=255 )
+Clamp( _Value, _Min, _Max )
 {
     if( _Min   > _Max )
         Swap(_Min, _Max)
@@ -159,7 +159,7 @@ Swap( &Var1, &Var2 )
 ;~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~;
 ;------- SETTING INITIALIZATION ----------------------------------------------;
 
- Edit           ; Automatically open script in editor
+ Edit           ; Automatically open script in editor (useful when testing)
 ;KeyHistory 0   ; Disable key history
  Persistent     ; Script runs until explicitly stopped
  #SingleInstance Force   ; Automatically replace old script instances
@@ -168,7 +168,7 @@ Swap( &Var1, &Var2 )
  SendMode "Input"       ; Send == SendInput
  SetControlDelay   20   ; Control Delay  := default
  SetKeyDelay     0, 0   ; Key Delay      := smallest delay, smallest duration
- SetMouseDelay      0   ; Mouse Delay    := smallest possible
+ SetMouseDelay      0   ; Mouse Delay    := smallest delay
  SetTitleMatchMode  2   ; WinTitle match if contains substring anywhere
 
 UTIL_QuickSuspendSound  := true   ; Play a sound when quick-suspend toggling
@@ -179,6 +179,7 @@ UTIL_SuspendOSD_XPos    := (A_ScreenWidth  /  2)
 UTIL_SuspendOSD_YPos    := (A_ScreenHeight - 25)
 UTIL_SuspendOSD_Alpha   := 128
 
+
 ;~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~;
-;~=~=~=~| https://github.com/JaydenS115 |~=~=~=~=~=~=~=~| 04 SEP 2022 |~=~=~=~;
+;~=~=~=~| https://github.com/JaydenS115 |~=~=~=~=~=~=~=~| 08 SEP 2022 |~=~=~=~;
 ;~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~;

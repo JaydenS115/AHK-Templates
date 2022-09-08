@@ -9,4 +9,4 @@ _______________________________________________________________________
 
 AutoHotkey v2.0 Documentation:  https://lexikos.github.io/v2/docs/AutoHotkey.htm
 
-Editor Recommended - Scite4AutoHotkey:  https://www.autohotkey.com/scite4ahk/
+Editor That I Use - Scite4AutoHotkey:  https://www.autohotkey.com/scite4ahk/
